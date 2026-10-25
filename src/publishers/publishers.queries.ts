@@ -1,7 +1,7 @@
 export const publisherQueries = {
   readPublishers: `
-  SELECT DISTINCT
+  SELECT
     name AS publisherName
-  FROM bookshelf.publishers  
+  FROM bookshelf.publishers;  
   `
 }

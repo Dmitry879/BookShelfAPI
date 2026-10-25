@@ -7,6 +7,6 @@ export const readPublishers: RequestHandler = async (req: Request, res: Response
     res.status(200).json(publishers);
   } catch (error) {
     console.error('[publishers.controller][readPublishers][Error]', error);
-    res.status(500).json({message: 'There was an error when fetching publishers'});
+    res.status(500).json({ message: 'There was an error when fetching publishers' });
   }
 }
