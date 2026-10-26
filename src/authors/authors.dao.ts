@@ -9,3 +9,8 @@ export const readAuthors = async () => {
 export const readAuthorsByBookId = async (bookId: number) => {
   return execute<Author[]>(authorQueries.readAuthorsByBookIds, [bookId])
 }
+
+export const readAuthorsByBookIds = async (bookIds: number[]) => {
+  return execute<(Author & { bookId: number })[]>(authorQueries.readAuthorsByBookIds, [bookIds]
+  )
+}

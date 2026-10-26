@@ -12,6 +12,7 @@ import * as PublisherDao from '../publishers/publishers.dao.ts';
 export const readBooks: RequestHandler = async (req: Request, res: Response) => {
   try {
     const books = await BookDao.readBooks();
+    await populateBookAuthors(books);
     res
       .status(200)
       .json(books);
@@ -33,7 +34,7 @@ export const readBookById: RequestHandler = async (req: Request, res: Response) 
         return;
     }
     const book = await BookDao.readBookById(bookId);
-    await readAuthorsByBookId(book);
+    await populateBookAuthors(book);
     res
       .status(200)
       .json(book);
@@ -45,11 +46,27 @@ export const readBookById: RequestHandler = async (req: Request, res: Response) 
   }
 }
 
-async function readAuthorsByBookId(books: Book[]) {
+async function populateBookAuthors(books: Book[]): Promise<void> {
+  if (books.length === 0) {
+    return;
+  }
+
+  const bookIds = books.map(book => book.id);
+
+  const authors = await AuthorDao.readAuthorsByBookIds(bookIds);
+
+  for (const book of books) {
+    book.authors = authors
+                    .filter(author => author.bookId === book.id)
+                    .map(({ bookId, ...author}) => author)
+  }
+}
+
+/* async function readAuthorsByBookId(books: Book[]) {
   for (const book of books) {
     const authors = await AuthorDao.readAuthorsByBookId(book.id);
     book.authors = authors;
   }
-}
+} */
 
 
