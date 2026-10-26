@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import publishRouter from './publishers/publishers.routes.ts';
 import categoriesRouter from './categories/categories.routes.ts';
 import authorsRouter from './authors/authors.routes.ts';
+import bookRouter from './books/books.routes.ts';
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
-app.use('/', [publishRouter, categoriesRouter, authorsRouter])
+app.use('/', [publishRouter, categoriesRouter, authorsRouter, bookRouter])
 
 app.get('/', (req: Request, res: Response) => res.send('Greetings from BookShelfAPI'));
 app.listen(port, () => console.log(`BookShelfAPI app listening at http://localhost:${port}`));
