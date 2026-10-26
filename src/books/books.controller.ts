@@ -7,12 +7,15 @@ import type { Category } from '../categories/categories.model.ts';
 
 import * as BookDao from './books.dao.ts';
 import * as AuthorDao from '../authors/authors.dao.ts';
-import * as PublisherDao from '../publishers/publishers.dao.ts';
+import * as CategoryDao from '../categories/categories.dao.ts';
 
 export const readBooks: RequestHandler = async (req: Request, res: Response) => {
   try {
     const books = await BookDao.readBooks();
+
     await populateBookAuthors(books);
+    await populateBookCategories(books);
+
     res
       .status(200)
       .json(books);
@@ -34,7 +37,10 @@ export const readBookById: RequestHandler = async (req: Request, res: Response) 
         return;
     }
     const book = await BookDao.readBookById(bookId);
+
     await populateBookAuthors(book);
+    await populateBookCategories(book);
+
     res
       .status(200)
       .json(book);
@@ -43,6 +49,42 @@ export const readBookById: RequestHandler = async (req: Request, res: Response) 
     res
       .status(500)
       .json({ message: 'There was an error fetching book by id'});
+  }
+}
+
+export const readBooksByTitleSearch: RequestHandler = async (req: Request, res: Response) => {
+  try {
+    const books = await BookDao.readBooksByTitleSearch(`%${req.query.titleSearch}%`);
+    await Promise.all([
+      populateBookAuthors(books),
+      populateBookCategories(books)
+    ]);
+    res
+      .status(200)
+      .json(books);
+  } catch (error) {
+    console.error('[books.controller][readBooksByAuthorSearch][Error]', error);
+    res
+      .status(500)
+      .json({ message: 'There was an error fetching books by title search'});
+  }
+}
+
+export const readBooksByAuthorSearch: RequestHandler = async (req: Request, res: Response) => {
+  try {
+    const books = await BookDao.readBooksByAuthorSearch(`%${req.query.authorSearch}%`);
+    await Promise.all([
+      populateBookAuthors(books),
+      populateBookCategories(books)
+    ]);
+    res
+      .status(200)
+      .json(books);
+  } catch (error) {
+    console.error('[books.controller][readBooksByAuthorSearch][Error]', error);
+    res
+      .status(500)
+      .json({ message: 'There was an error fetching books by author search'});
   }
 }
 
@@ -62,11 +104,20 @@ async function populateBookAuthors(books: Book[]): Promise<void> {
   }
 }
 
-/* async function readAuthorsByBookId(books: Book[]) {
-  for (const book of books) {
-    const authors = await AuthorDao.readAuthorsByBookId(book.id);
-    book.authors = authors;
+async function populateBookCategories(books: Book[]): Promise<void> {
+  if (books.length === 0) {
+    return;
   }
-} */
+
+  const bookIds = books.map(book => book.id);
+
+  const categories = await CategoryDao.readCategoriesByBookIds(bookIds);
+
+  for (const book of books) {
+    book.categories = categories
+                        .filter(category => category.bookId === book.id)
+                        .map(({ bookId, ...category}) => category)
+  }
+}
 
 
