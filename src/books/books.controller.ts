@@ -12,10 +12,43 @@ import * as PublisherDao from '../publishers/publishers.dao.ts';
 export const readBooks: RequestHandler = async (req: Request, res: Response) => {
   try {
     const books = await BookDao.readBooks();
-    res.status(200).json(books);
+    res
+      .status(200)
+      .json(books);
   } catch (error) {
     console.error('[books.controller][readBooks][Error]', error);
-    res.status(500).json({ message: 'There was an error when fetching books'});
+    res
+      .status(500)
+      .json({ message: 'There was an error when fetching books'});
+  }
+}
+
+export const readBookById: RequestHandler = async (req: Request, res: Response) => {
+  try {
+    const bookId = Number(req.query.id);
+    if (!Number.isInteger(bookId) || bookId <= 0) {
+      res
+        .status(400)
+        .json({ Message: 'Invalid id parameter'});
+        return;
+    }
+    const book = await BookDao.readBookById(bookId);
+    await readAuthorsByBookId(book);
+    res
+      .status(200)
+      .json(book);
+  } catch (error) {
+    console.error('[books.controller][readBookById][Error]', error);
+    res
+      .status(500)
+      .json({ message: 'There was an error fetching book by id'});
+  }
+}
+
+async function readAuthorsByBookId(books: Book[]) {
+  for (const book of books) {
+    const authors = await AuthorDao.readAuthorsByBookId(book.id);
+    book.authors = authors;
   }
 }
 

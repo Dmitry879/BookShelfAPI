@@ -4,8 +4,9 @@ import type { Request, Response } from 'express';
 import * as AuthorController from './authors.controller.ts';
 
 const router = Router();
+
 router
   .route('/authors')
-  .get(AuthorController.readAuthors);
+  .get(AuthorController.readAuthorsByBookId);
 
 export default router;
