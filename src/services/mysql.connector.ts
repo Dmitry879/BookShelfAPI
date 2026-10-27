@@ -1,5 +1,6 @@
 import mysql from 'mysql2';
 import type { Pool } from 'mysql2';
+import type { PoolConnection } from 'mysql2/promise';
 
 const { createPool } = mysql;
 
@@ -37,21 +38,43 @@ const initializeMySqlConnector = () => {
   }
 }
 
-export const execute = <T>(query: string, params: any[] | Record<string, any>): Promise<T> => {
+export const execute = <T>(query: string,
+                           params: any[] | Record<string, any>,
+                           connection?: PoolConnection): Promise<T> => {
   try {
     if (!pool) {
       initializeMySqlConnector();
     }
     return new Promise<T>((resolve, reject) => {
-      pool!.query(query, params, (error, results) => {
+      /* pool!.query(query, params, (error, results) => {
         if (error)
           reject(error);
         else
           resolve(results as T);
-      })
+      }) */
+
+      if (connection) {
+        connection.query(query, params)
+          .then(([results]) => resolve(results as T))
+          .catch(reject);
+      } else {
+        pool!.query(query, params, (error, results) => {
+          if (error) reject(error);
+          else resolve(results as T);
+        });
+      }
+
     });
   } catch (error) {
       console.error('[mysql.connector][execute][Error]', error);
       throw new Error('failed to execute MySQL query');
   }
+}
+
+export const getConnection = (): Promise<PoolConnection> => {
+  if (!pool) {
+    initializeMySqlConnector();
+  }
+
+  return pool!.promise().getConnection();
 }

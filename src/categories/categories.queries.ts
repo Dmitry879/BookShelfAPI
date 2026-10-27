@@ -14,5 +14,20 @@ export const categoryQueries = {
     INNER JOIN bookshelf.books_categories AS bc
     ON c.id = bc.category_id
     WHERE bc.book_id IN (?);
+    `,
+    readCategoryByName: `
+      SELECT
+        id,
+        name
+      FROM bookshelf.categories
+      WHERE name = ?;
+    `,
+    createCategory: `
+      INSERT INTO bookshelf.categories(name)
+      VALUES (?);
+    `,
+    addCategoryToBook: `
+      INSERT INTO books_categories (book_id, category_id)
+      VALUES (?,?);
     `
 }

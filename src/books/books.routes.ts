@@ -20,4 +20,6 @@ router.get('/books', (req, res, next) => {
   return BookController.readBooks(req, res, next);
 });
 
+router.post('/books', BookController.createBook);
+
 export default router;

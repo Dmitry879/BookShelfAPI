@@ -8,6 +8,10 @@ import type { Category } from '../categories/categories.model.ts';
 import * as BookDao from './books.dao.ts';
 import * as AuthorDao from '../authors/authors.dao.ts';
 import * as CategoryDao from '../categories/categories.dao.ts';
+import * as BookService from './books.services.ts';
+import type { CreateBookRequest } from './books.requests.ts';
+import { validateCreateBookRequest } from './books.requests.ts';
+import { BookValidationError } from './books.requests.ts';
 
 export const readBooks: RequestHandler = async (req: Request, res: Response) => {
   try {
@@ -86,6 +90,42 @@ export const readBooksByAuthorSearch: RequestHandler = async (req: Request, res:
       .status(500)
       .json({ message: 'There was an error fetching books by author search'});
   }
+}
+
+export const createBook: RequestHandler = async (req: Request, res: Response) => {
+  try {
+    const request: CreateBookRequest = req.body;
+
+    validateCreateBookRequest(request)
+
+    const bookId: number = await BookService.createBook(request);
+
+    res
+      .status(201)
+      .json({ message: 'Book created successfully', bookId});
+
+  } catch (error) {
+      console.error('[books.controller][createBook][error]', error);
+
+      if (error instanceof BookValidationError) {
+        res
+          .status(400)
+          .json({ message: error.message })
+      }
+
+      if (error instanceof Error &&
+          error.message === 'A book with this ISBN already exists.'
+      ) {
+        res
+          .status(409)
+          .json({ message: error.message });
+      }
+
+      res
+        .status(500)
+        .json({ message: 'Failed to create book'});
+  }
+  
 }
 
 async function populateBookAuthors(books: Book[]): Promise<void> {

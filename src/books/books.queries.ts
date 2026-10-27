@@ -59,5 +59,23 @@ export const bookQueries = {
     INNER JOIN bookshelf.authors AS a
     ON ba.author_id = a.id
     WHERE a.name LIKE ?;
-    `
+    `,
+  readBookByIsbn: `
+    SELECT
+      id,
+      isbn
+    FROM bookshelf.books
+    WHERE isbn = ?;
+  `,
+  createBook: `
+    INSERT INTO bookshelf.books (
+      title,
+        publisher_id,
+        publish_date,
+        isbn,
+        num_pages,
+        description
+        )
+    VALUES(?,?,?,?,?,?);
+  `
 }
