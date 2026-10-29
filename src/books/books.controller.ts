@@ -9,8 +9,8 @@ import * as BookDao from './books.dao.ts';
 import * as AuthorDao from '../authors/authors.dao.ts';
 import * as CategoryDao from '../categories/categories.dao.ts';
 import * as BookService from './books.services.ts';
-import type { CreateBookRequest } from './books.requests.ts';
-import { validateCreateBookRequest } from './books.requests.ts';
+import type { CreateBookRequest, UpdateBookRequest } from './books.requests.ts';
+import { validateBookRequest } from './books.requests.ts';
 import { BookValidationError } from './books.requests.ts';
 
 export const readBooks: RequestHandler = async (req: Request, res: Response) => {
@@ -96,7 +96,7 @@ export const createBook: RequestHandler = async (req: Request, res: Response) =>
   try {
     const request: CreateBookRequest = req.body;
 
-    validateCreateBookRequest(request)
+    validateBookRequest(request)
 
     const bookId: number = await BookService.createBook(request);
 
@@ -124,8 +124,86 @@ export const createBook: RequestHandler = async (req: Request, res: Response) =>
       res
         .status(500)
         .json({ message: 'Failed to create book'});
+  } 
+}
+
+export const updateBook: RequestHandler = async (req: Request, res: Response) => {
+  try {
+    const request: UpdateBookRequest = req.body;
+    validateBookRequest(request);
+    const bookId = Number(req.query.id);
+    if (!Number.isSafeInteger(bookId) || bookId <= 0) {
+      res
+        .status(400)
+        .json({ message: 'Invalid book ID.'});
+      return;
+    }
+    await BookService.updateBook(bookId, request);
+    res
+      .status(200)
+      .json({ message: 'Book updated successfully.', bookId});
+  } catch (error) {
+    if (error instanceof BookValidationError) {
+      res
+        .status(400)
+        .json({ message: error.message});
+      return;
+    }
+    if (error instanceof Error && error.message === 'Book not found.') {
+      res
+        .status(404)
+        .json({ message: error.message})
+      return;
+    }
+    if ((error instanceof Error && error.message === 'A different book already uses this ISBN.') ||
+         typeof error === 'object' && error != null && 'code' in error && error.code === 'ER_DUP_ENTRY') {
+          res
+            .status(409)
+            .json({ message: 'A book with this ISBN already exists.' });
+          return;
+         }
+    console.error('[books.controller][updateBook][error]', error);
+    res
+      .status(500)
+      .json({ message: 'There was an error updating the book.'});
   }
-  
+}
+
+export const deleteBook: RequestHandler = async (req: Request, res: Response) => {
+
+  try {
+
+    const bookId = Number(req.query.id);
+
+    if (!Number.isSafeInteger(bookId) || bookId <= 0) {
+      res
+        .status(400)
+        .json({ message: 'Invalid book ID.'});
+      return;
+    }
+
+    // Call service method
+    const deleted = await BookService.deleteBook(bookId);
+
+    // Check whether book exists
+    if (!deleted) {
+      res
+        .status(404)
+        .json({ message: 'Book not found.'});
+      return;
+    }
+
+    // Successful deletion
+    res
+      .status(200)
+      .json({ message: 'Book deleted successfully.', bookId});
+
+  } catch (error) {
+    console.error('[book.controller][deleteBook][error]', error);
+    res
+      .status(500)
+      .json({ message: 'There was an error deleting the book.'});
+  }
 }
 
 async function populateBookAuthors(books: Book[]): Promise<void> {

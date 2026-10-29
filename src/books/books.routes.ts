@@ -1,6 +1,5 @@
 import express from 'express';
 import { Router } from 'express';
-import type { Request, Response } from 'express';
 import * as BookController from './books.controller.ts';
 
 const router = Router();
@@ -21,5 +20,9 @@ router.get('/books', (req, res, next) => {
 });
 
 router.post('/books', BookController.createBook);
+
+router.put('/books', BookController.updateBook);
+
+router.delete('/books', BookController.deleteBook);
 
 export default router;

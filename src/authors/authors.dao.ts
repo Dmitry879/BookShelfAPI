@@ -29,3 +29,8 @@ export const createAuthor = async (author: Omit<Author, 'id'>, connection?: Pool
 export const addAuthorToBook = async (bookId: number, authorId: number, connection?: PoolConnection) => {
   return execute<ResultSetHeader>(authorQueries.addAuthorToBook, [bookId, authorId], connection);
 }
+
+export const removeAuthorsFromBook = async (bookId: number,
+                                            connection: PoolConnection) => {
+  return execute<ResultSetHeader>(authorQueries.removeAuthorsFromBook, [bookId], connection);
+}

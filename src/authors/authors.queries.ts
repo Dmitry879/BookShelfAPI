@@ -40,5 +40,9 @@ export const authorQueries = {
   addAuthorToBook: `
     INSERT INTO books_authors (book_id, author_id)
     VALUES (?,?);
+  `,
+  removeAuthorsFromBook: `
+    DELETE FROM books_authors
+    WHERE book_id = ?;
   `
 }

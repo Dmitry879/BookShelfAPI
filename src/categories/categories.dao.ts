@@ -24,3 +24,7 @@ export const createCategory = async (category: Omit<Category, 'id'>, connection?
 export const addCategoryToBook = async (bookId: number, categoryId: number, connection?: PoolConnection) => {
   return execute<ResultSetHeader>(categoryQueries.addCategoryToBook, [bookId, categoryId], connection);
 }
+
+export const removeCategoriesFromBook = async (bookId: number, connection: PoolConnection) => {
+  return execute<ResultSetHeader>(categoryQueries.removeCategoriesFromBook, [bookId], connection);
+}

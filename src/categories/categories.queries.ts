@@ -29,5 +29,9 @@ export const categoryQueries = {
     addCategoryToBook: `
       INSERT INTO books_categories (book_id, category_id)
       VALUES (?,?);
-    `
+    `,
+    removeCategoriesFromBook: `
+    DELETE FROM bookshelf.books_categories
+    WHERE book_id = ?;
+  `
 }

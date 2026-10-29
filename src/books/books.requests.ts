@@ -1,4 +1,4 @@
-export interface CreateBookRequest {
+export interface BookRequest {
   title: string,
   authors: { name: string }[],
   categories: { name: string }[],
@@ -9,7 +9,11 @@ export interface CreateBookRequest {
   description: string
 }
 
-export const validateCreateBookRequest = (request: CreateBookRequest): void => {
+export interface CreateBookRequest extends BookRequest {}
+
+export interface UpdateBookRequest extends BookRequest {}
+
+export const validateBookRequest = (request: BookRequest): void => {
 
   if (!request || typeof request !== 'object' || Array.isArray(request)) {
     throw new BookValidationError('Invalid book request.');

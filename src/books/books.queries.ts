@@ -70,12 +70,27 @@ export const bookQueries = {
   createBook: `
     INSERT INTO bookshelf.books (
       title,
-        publisher_id,
-        publish_date,
-        isbn,
-        num_pages,
-        description
-        )
+      publisher_id,
+      publish_date,
+      isbn,
+      num_pages,
+      description
+      )
     VALUES(?,?,?,?,?,?);
+  `,
+  updateBook: `
+    UPDATE bookshelf.books
+    SET
+      title = ?,
+        publisher_id = ?,
+        publish_date = ?,
+        isbn = ?,
+        num_pages = ?,
+        description = ?
+    WHERE id = ?;
+  `,
+  deleteBook: `
+    DELETE FROM bookshelf.books
+    WHERE id = ?;
   `
 }
