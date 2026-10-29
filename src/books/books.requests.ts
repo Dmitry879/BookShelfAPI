@@ -6,7 +6,8 @@ export interface BookRequest {
   publishDate: string,
   isbn: string,
   numPages: number,
-  description: string
+  description: string,
+  coverImage: string | null
 }
 
 export interface CreateBookRequest extends BookRequest {}
@@ -58,6 +59,10 @@ export const validateBookRequest = (request: BookRequest): void => {
     throw new BookValidationError('Book description is required.');
   }
 
+  if (request.coverImage !== null && 
+    (typeof request.coverImage !== 'string' || !request.coverImage.trim())) {
+      throw new BookValidationError('Cover image must be a valid file path or null.');
+    }
 }
 
 export class BookValidationError extends Error {

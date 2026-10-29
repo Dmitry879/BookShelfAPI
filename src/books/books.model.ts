@@ -10,5 +10,6 @@ export interface Book {
   publishDate: Date,
   isbn: string,
   numPages: number,
-  description: string
+  description: string,
+  coverImage: string | null
 }

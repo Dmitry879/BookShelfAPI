@@ -1,5 +1,3 @@
-import { readBooksByTitleSearch } from "./books.dao.ts";
-
 export const bookQueries = {
   readBooks: `
     SELECT
@@ -9,7 +7,8 @@ export const bookQueries = {
       b.publish_date AS publishDate,
       b.isbn AS isbn,
       b.num_pages AS numPages,
-      b.description AS description
+      b.description AS description,
+      b.cover_image AS coverImage
     FROM bookshelf.books AS b
     LEFT JOIN bookshelf.publishers AS p
     ON b.publisher_id = p.id;
@@ -22,7 +21,8 @@ export const bookQueries = {
       b.publish_date AS publishDate,
       b.isbn AS isbn,
       b.num_pages AS numPages,
-      b.description AS description
+      b.description AS description,
+      b.cover_image AS coverImage
     FROM bookshelf.books AS b
     LEFT JOIN bookshelf.publishers AS p
     ON b.publisher_id = p.id
@@ -36,7 +36,8 @@ export const bookQueries = {
       b.publish_date AS publishDate,
       b.isbn AS isbn,
       b.num_pages AS numPages,
-      b.description AS description
+      b.description AS description,
+      b.cover_image AS coverImage
     FROM bookshelf.books AS b
     LEFT JOIN bookshelf.publishers AS p
     ON b.publisher_id = p.id
@@ -50,7 +51,8 @@ export const bookQueries = {
       b.publish_date AS publishDate,
       b.isbn AS isbn,
       b.num_pages AS numPages,
-      b.description AS description
+      b.description AS description,
+      b.cover_image AS coverImage
     FROM bookshelf.books AS b
     INNER JOIN bookshelf.publishers AS p
     ON b.publisher_id = p.id
@@ -74,9 +76,10 @@ export const bookQueries = {
       publish_date,
       isbn,
       num_pages,
-      description
+      description,
+      cover_image
       )
-    VALUES(?,?,?,?,?,?);
+    VALUES(?,?,?,?,?,?,?);
   `,
   updateBook: `
     UPDATE bookshelf.books
@@ -86,7 +89,8 @@ export const bookQueries = {
         publish_date = ?,
         isbn = ?,
         num_pages = ?,
-        description = ?
+        description = ?,
+        cover_image = ?
     WHERE id = ?;
   `,
   deleteBook: `

@@ -1,4 +1,3 @@
-import type { Book } from './books.model.ts';
 import type { BookRequest, CreateBookRequest } from './books.requests.ts';
 import type { UpdateBookRequest } from './books.requests.ts';
 
@@ -166,7 +165,8 @@ function buildBook(request: BookRequest,
     publishDate: new Date(request.publishDate),
     isbn: request.isbn,
     numPages: request.numPages,
-    description: request.description
+    description: request.description,
+    coverImage: request.coverImage
   }
 }
 

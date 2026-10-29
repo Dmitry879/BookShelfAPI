@@ -1,9 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 
 import type { Book } from './books.model.ts';
-import type { Author } from '../authors/authors.models.ts';
-import type { Publisher } from '../publishers/publishers.model.ts';
-import type { Category } from '../categories/categories.model.ts';
 
 import * as BookDao from './books.dao.ts';
 import * as AuthorDao from '../authors/authors.dao.ts';

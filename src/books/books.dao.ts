@@ -33,7 +33,8 @@ export const createBook = async (book: Omit<Book, 'id'>, connection?: PoolConnec
                                    book.publishDate,
                                    book.isbn,
                                    book.numPages,
-                                   book.description],
+                                   book.description,
+                                   book.coverImage],
                                    connection);
 }
 
@@ -44,6 +45,7 @@ export const updateBook = async (book: Book, connection?: PoolConnection) => {
                                                            book.isbn,
                                                            book.numPages,
                                                            book.description,
+                                                           book.coverImage,
                                                            book.id],
                                                            connection);
 }
