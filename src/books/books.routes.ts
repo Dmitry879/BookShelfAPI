@@ -5,9 +5,7 @@ import * as BookController from './books.controller.ts';
 const router = Router();
 
 router.get('/books', (req, res, next) => {
-  if (req.query.id !== undefined) {
-    return BookController.readBookById(req, res, next);
-  }
+  
   if (req.query.titleSearch !== undefined) {
     return BookController.readBooksByTitleSearch(req, res, next);
   }
@@ -19,10 +17,12 @@ router.get('/books', (req, res, next) => {
   return BookController.readBooks(req, res, next);
 });
 
+router.get('/books/:id', BookController.readBookById);
+
 router.post('/books', BookController.createBook);
 
-router.put('/books', BookController.updateBook);
+router.put('/books/:id', BookController.updateBook);
 
-router.delete('/books', BookController.deleteBook);
+router.delete('/books/:id', BookController.deleteBook);
 
 export default router;

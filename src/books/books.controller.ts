@@ -30,11 +30,11 @@ export const readBooks: RequestHandler = async (req: Request, res: Response) => 
 
 export const readBookById: RequestHandler = async (req: Request, res: Response) => {
   try {
-    const bookId = Number(req.query.id);
+    const bookId = Number(req.params.id);
     if (!Number.isInteger(bookId) || bookId <= 0) {
       res
         .status(400)
-        .json({ Message: 'Invalid id parameter'});
+        .json({ Message: 'Invalid id parameter' });
         return;
     }
     const book = await BookDao.readBookById(bookId);
@@ -107,7 +107,8 @@ export const createBook: RequestHandler = async (req: Request, res: Response) =>
       if (error instanceof BookValidationError) {
         res
           .status(400)
-          .json({ message: error.message })
+          .json({ message: error.message });
+        return;
       }
 
       if (error instanceof Error &&
@@ -116,6 +117,7 @@ export const createBook: RequestHandler = async (req: Request, res: Response) =>
         res
           .status(409)
           .json({ message: error.message });
+        return;
       }
 
       res
@@ -128,7 +130,7 @@ export const updateBook: RequestHandler = async (req: Request, res: Response) =>
   try {
     const request: UpdateBookRequest = req.body;
     validateBookRequest(request);
-    const bookId = Number(req.query.id);
+    const bookId = Number(req.params.id);
     if (!Number.isSafeInteger(bookId) || bookId <= 0) {
       res
         .status(400)
@@ -170,7 +172,7 @@ export const deleteBook: RequestHandler = async (req: Request, res: Response) =>
 
   try {
 
-    const bookId = Number(req.query.id);
+    const bookId = Number(req.params.id);
 
     if (!Number.isSafeInteger(bookId) || bookId <= 0) {
       res
